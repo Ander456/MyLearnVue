@@ -1,0 +1,554 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        {{ message }}
+    </div>
+
+    <div id="app2">
+        <span v-bind:title="message">
+            鼠标悬停几秒钟查看绑定信息
+        </span>
+    </div>
+
+    <div id="app3">
+        <p v-if="seen">现在你看到我了</p>
+    </div>
+
+    <div id="app4">
+        <ol>
+            <li v-for="todo in todos">
+                {{todo.text}}
+            </li>
+        </ol>
+    </div>
+
+    <div id="app5">
+        <p>{{message}}</p>
+        <button v-on:click="reserveMessage">逆转消息</button>
+    </div>
+
+    <div id="app6">
+        <p>{{message}}</p>
+        <input v-model="message">
+    </div>
+
+    <div id="app7">
+        <ol>
+            <todo-item v-for="item in groceryList" v-bind:todo="item" v-bind:key="item.id">
+            </todo-item>
+        </ol>
+    </div>
+
+    <div id="app8">
+        <p>{{foo}}</p>
+        <button v-on:click="foo = baz">Change it</button>
+    </div>
+
+    <div id="example1">
+        <p>Original message: "{{message}}"</p>
+        <p>Computed reserved message: "{{reversedMessage}}"</p>
+    </div>
+
+    <div id="watch-example">
+        <p>
+            Ask a yes/no question:
+            <input v-model="question">
+        </p>
+        <p>{{answer}}</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script>
+        var watchExampleVM = new Vue({
+            el: "#watch-example",
+            data: {
+                question: "",
+                answer: "I cannot give you an answer until you ask a question!"
+            },
+            watch: {
+                question: function (newQuestion, oldQuestion) {
+                    this.answer = "Waiting for you to stop typing..."
+                    this.debouncedGetAnswer()
+                }
+            },
+            created: function () {
+                this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+            },
+            methods: {
+                getAnswer: function () {
+                    if (this.question.indexOf("?") === -1) {
+                        this.answer = "Questions usually contain a question mark. ;-"
+                        return
+                    }
+                    this.answer = "Thinking..."
+                    var vm = this;
+                    axios.get("https://yesno.wtf/api")
+                        .then(function (response) {
+                            vm.answer = _.capitalize(response.data.answer)
+                        })
+                        .catch(function (error) {
+                            vm.answer = "Error! could not reach the API. " + error
+                        })
+                }
+            }
+        })
+    </script>
+
+    <div id="slot-example">
+        <child-component>
+            <template slot="girl">
+                漂亮、美丽、购物、逛街
+            </template>
+            <template slot="boy">
+                帅气、才实
+            </template>
+            <div>
+                我是一类人，
+                我是默认的插槽
+            </div>
+        </child-component>
+    </div>
+    <script>
+        Vue.component('child-component', {
+            template: `
+            <div>
+            <h4>这个世界不仅有男人和女人</h4>
+
+            <slot name="girl"></slot>
+
+            <div style="height:1px;background-color:red;"></div>
+
+            <slot name="boy"></slot>
+
+            <div style="height:1px;background-color:red;"></div>
+
+            <slot></slot>
+            </div>
+        `
+        })
+        var vm1 = new Vue({
+            el: '#slot-example',
+            data: {
+
+            }
+        })
+    </script>
+
+    <div id="slot-example2">
+        <child>
+            <template slot-scope="a">
+                　　　　　　
+                <!-- {"say":"你好"} -->
+
+                {{a}}
+            </template>
+        </child>
+    </div>
+    <script>
+        Vue.component('child', {
+            template: `
+            <div>
+                <slot say="你好"></slot>
+            </div>
+        `
+        })
+
+        var vm2 = new Vue({
+            el: '#slot-example2',
+            data: {
+
+            }
+        })
+    </script>
+
+    <div id="app11">
+        <h1>Hello Vue-Router!</h1>
+        <p>
+            <router-link to="/foo">Go to Foo</router-link>
+            <router-link to="/bar">Go to Bar</router-link>
+        </p>
+        <router-view>
+        </router-view>
+    </div>
+
+    <div class="test">
+        <a v-bind:href="url">点击我跳到百度首页</a>
+        <div v-bind:style="{color: colorB}">我是绿色</div>
+    </div>
+    <script type="text/javascript">
+        var myVue = new Vue({
+            el: ".test",
+            data: {
+                url: "https://www.baidu.com/",
+                colorA: 'red',
+                colorB: 'green'
+            }
+        });
+    </script>
+
+    <div class="test1">
+        <button v-on:click="goAction()">
+            <!--可以简写为@click-->
+            点击我跳到百度
+        </button>
+    </div>
+    <script type="text/javascript">
+        var myVue = new Vue({
+            el: ".test1",
+            methods: {
+                goAction: function () {
+                    location.href = "https://www.baidu.com/";
+                }
+            }
+        });
+    </script>
+
+    <div class="test2" style="border: 1px black dashed; padding: 8px">
+        {{a}}
+    </div>
+    <div class="test3" style="border: 1px red solid; margin-top: 8px">
+        我是内容二
+    </div>
+    <script type="text/javascript">
+        var myVue2 = new Vue({
+            el: ".test2",
+            data: {
+                a: "我是内容，在控制台输入myVue2.a = xx 可以改变我的值"
+            },
+            beforeCreate() {
+                console.log("创建之前");
+            },
+            created: function () {
+                console.log("创建之后");
+
+            },
+            beforeMount() {
+                console.log("安装之前");
+
+            },
+            mounted() {
+                console.log("安装之后");
+
+            },
+            beforeUpdate() {
+                console.log("更新之前");
+
+            },
+            updated() {
+                console.log("更新");
+
+            },
+            beforeDestroy() {
+                console.log("销毁之前");
+
+            },
+            destroyed() {
+                console.log("销毁之后");
+
+            }
+        })
+    </script>
+
+
+    <div class="test4">
+        {{a}}
+    </div>
+    <script type="text/javascript">
+        var data = {
+            a: 1,
+            b: function () {
+                return 1;
+            }
+        }
+        var myVue4 = new Vue({
+            el: ".test4",
+            data: data
+        })
+    </script>
+
+    <div class="test5">
+        <p>{{message}}</p>
+        <!--这个值可以实时响应-->
+        <p v-once>{{message}}</p>
+        <!--单次插值,今后的数据变化就不会再引起插值更新了,例如在控制台写入:myVue.message=123-->
+        <p v-bind:class="{ message }">双括号标签也可以用在属性上</p>
+        <p v-if="isshow">isshowhaha</p>
+    </div>
+    <script type="text/javascript">
+        var myVue5 = new Vue({
+            el: ".test5",
+            data: {
+                message: "xiaoman",
+                isshow: true
+            }
+        })
+    </script>
+
+    <div class="test6">
+        {{message | capitalize}}
+    </div>
+    <script type="text/javascript">
+        var myVue = new Vue({
+            el: ".test6",
+            data: {
+                message: "abc"
+            },
+            filters: {
+                capitalize: function (value) {
+                    return value.charAt(0).toUpperCase() + value.slice(1);
+                }
+            }
+        })
+    </script>
+
+    <div class="test7">
+        a的值是{{a}}
+        b的值是{{b}}
+    </div>
+    <script type="text/javascript">
+        var myVue7 = new Vue({
+            el: ".test7",
+            data: {
+                a: 1,
+                b: 0
+            },
+            watch: {
+                a: function () {
+                    this.b = this.a + 3;
+                }
+            }
+        })
+    </script>
+
+    <div class="test8">
+        c的值是{{c}}
+        d的值是{{d}}
+    </div>
+    <script type="text/javascript">
+        var myVue8 = new Vue({
+            el: ".test8",
+            data: {
+                c: 1,
+            },
+            computed: {
+                d: {
+                    get: function () {
+                        return this.c + 3;
+                    },
+                    set: function (value) {
+                        this.c = value - 1;
+                    }
+                }
+            }
+        })
+    </script>
+
+    <div class="test9">
+        <div class="otherClass" v-bind:class="{'class1':name1,'class2':name2}">我是文字</div>
+        <!--法一:用对象的方式实现-->
+    </div>
+    <script type="text/javascript">
+        var myVue9 = new Vue({
+            el: ".test9",
+            data: {
+                name1: true,
+                name2: false,
+            }
+        })
+    </script>
+
+    <div class="test10">
+        <div class="test10" :class="classObj">我是文字啊啊啊</div>
+    </div>
+    <script type="text/javascript">
+        var myVue10 = new Vue({
+            el: ".test10",
+            data: {
+                classObj: {
+                    name1: true,
+                    name2: false,
+                }
+            }
+        })
+    </script>
+
+    <!-- <div class="test11"> -->
+    <div class="test11" :style="{color: yanse,width: kuan + 'px' }">我是文字哈哈哈</div>
+    <!-- </div> -->
+    <script type="text/javascript">
+        var myVue11 = new Vue({
+            el: ".test11",
+            data: {
+                yanse: "red",
+                kuan: 100
+            }
+        })
+    </script>
+
+    <div class="test12">
+        <template v-if="isDisplay">
+            <!--if...else... 用template实现多个元素-->
+            <div>显示我1</div>
+            <div>显示我11</div>
+            <div>显示我12</div>
+            <div>显示我13</div>
+        </template>
+        <div v-else>
+            显示我2
+        </div>
+    </div>
+    <script type="text/javascript">
+        var myVue12 = new Vue({
+            el: ".test12",
+            data: {
+                isDisplay: 1
+            }
+        })
+    </script>
+
+    <div id="test13">
+        <button @click="changeColor('你好',$event)">点击我</button>
+        <!--这里使用@-->
+        <div style="height: 100px;width: 100px;background-color: red;" @mouseover="over('鼠标从我上面滑过',$event)">
+            鼠标从我上面滑过试试
+        </div>
+    </div>
+    <script type="text/javascript">
+        var myVue13 = new Vue({
+            el: '#test13',
+            methods: {      //这里使用methods
+                changeColor: function (message, event) {
+                    alert(message + event);    //弹出我被点击了,事件是[object MouseEvent]
+                },
+                over: function (message, event) {
+                    alert(message + event);   //弹出鼠标从我上面滑过,事件是[object MouseEvent]
+                }
+            }
+        })
+    </script>
+
+    <div id="test14">
+        <button @click.stop="sayHi('你好')">说你好</button> <!-- 阻止单击事件冒泡 -->
+        <button @click.prevent="sayHi('你好')">说你好</button> <!-- 提交事件不再重载页面 -->
+        <button @click.stop.prevent="sayHi('你好')">说你好</button> <!-- 阻止单击事件冒泡和提交事件不再重载页面 -->
+        <button @click.capture="sayHi('你好')">说你好</button> <!-- 添加事件侦听器时使用 capture 模式 -->
+        <button @click.self="sayHi('你好')">说你好</button> <!-- 只当事件在该元素本身（而不是子元素）触发时触发回调 -->
+
+        <div @keyup.13="sayHi('你好')">说你好</div> <!-- 只有在 keyCode 是 13 时调用 vm.submit() -->
+    </div>
+    <script type="text/javascript">
+        var myVue14 = new Vue({
+            el: '#test14',
+            methods: {      //这里使用methods
+                sayHi: function (message) {
+                    alert(message)
+                }
+            }
+        })
+    </script>
+
+    <script type="text/javascript">
+        var myMinxin = {             //第一步,创建一个混合数据
+            created: function () {
+                this.hello();
+            },
+            methods: {
+                hello: function () {
+                    alert('你好');
+                }
+            }
+        }
+
+        // var myComponent = Vue.extend({    //将混合注册到Vue
+        //     mixins: [myMinxin]
+        // })
+        var myComponent = Vue.extend({    //注意Vue的created与minxin的created重合,这里将先执行minxin的created
+            created: function () {
+                alert('我是Vue的created');
+            },
+            mixins: [myMinxin]
+        })
+
+        new myComponent();    //实例化这个混合
+    </script>
+
+    <div class="test15">
+        <zujian></zujian>
+    </div>
+    <script type="text/javascript">
+        var mycomp = Vue.extend({
+            template: "<div>我是内容</div>"
+        })
+        Vue.component("zujian", mycomp);
+        var compvue = new Vue({
+            el: ".test15"
+        })
+    </script>
+
+    <div class="test16">
+        <zujian></zujian>
+    </div>
+    <template id="parentcomp">
+        <div class="myParent">
+            我是父组件
+            <child></child>
+        </div>
+    </template>
+    <template id="childcomp">
+        <div class="myChild">
+            我是子组件
+        </div>
+    </template>
+    <script type="text/javascript">
+        var pccomp = new Vue({
+            el: ".test16",
+            components: {
+                zujian: {
+                    template: "#parentcomp",
+                    components: {
+                        child: {
+                            template: "#childcomp"
+                        }
+                    }
+                }
+            }
+        })
+    </script>
+
+    <template id="child-template">
+        <p>{{msg1}}</p>
+    </template>
+    <div id="events-exmaple">
+        <p>Message: {{messages}}</p>
+        <child :msg1="mssss"></child>
+    </div>
+    <script type="text/javascript">
+        var parent = new Vue({
+            el: "#events-exmaple",
+            data: {
+                messages: "我是父框架222",
+                mssss: "sdfsdf"
+            },
+            components: {
+                child: {
+                    template: "#child-template",
+                    props: { msg1: String }
+                }
+            }
+        })
+    </script>
+
+
+    <script src="index.js"></script>
+</body>
+
+</html>
