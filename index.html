@@ -2,8 +2,10 @@
 
 <head>
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 
 <body>
@@ -14,7 +16,7 @@
 
     <div id="app2">
         <span v-bind:title="message">
-            鼠标悬停几秒钟查看绑定信息
+            鼠标悬停几秒钟查看绑定信息`
         </span>
     </div>
 
@@ -49,7 +51,7 @@
 
     <div id="app8">
         <p>{{foo}}</p>
-        <button v-on:click="foo = baz">Change it</button>
+        <button v-on:click="foo = 'baz'">Change it</button>
     </div>
 
     <div id="example1">
@@ -185,7 +187,7 @@
         <div v-bind:style="{color: colorB}">我是绿色</div>
     </div>
     <script type="text/javascript">
-        var myVue = new Vue({
+        var myVueZ = new Vue({
             el: ".test",
             data: {
                 url: "https://www.baidu.com/",
@@ -196,7 +198,7 @@
     </script>
 
     <div class="test1">
-        <button v-on:click="goAction()">
+        <button v-on:click="goAction">
             <!--可以简写为@click-->
             点击我跳到百度
         </button>
@@ -260,13 +262,13 @@
 
 
     <div class="test4">
-        {{a}}
+        {{a}}{{b}}
     </div>
     <script type="text/javascript">
         var data = {
             a: 1,
             b: function () {
-                return 1;
+                return "a";
             }
         }
         var myVue4 = new Vue({
@@ -456,7 +458,7 @@
         })
     </script>
 
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
         var myMinxin = {             //第一步,创建一个混合数据
             created: function () {
                 this.hello();
@@ -479,7 +481,7 @@
         })
 
         new myComponent();    //实例化这个混合
-    </script>
+    </script> -->
 
     <div class="test15">
         <zujian></zujian>
@@ -547,6 +549,106 @@
         })
     </script>
 
+    <div id="elementForm1">
+        <el-form ref="form" :model="form" label-width="80px">
+            <el-form-item label="活动名称">
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域">
+                <el-select v-model="form.region" placeholder="请选择活动区域">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="活动时间">
+                <el-col :span="11">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 100%;"></el-date-picker>
+                </el-col>
+                <el-col class="line" :span="2">-</el-col>
+                <el-col :span="11">
+                    <el-time-picker type="fixed-time" placeholder="选择时间" v-model="form.date2" style="width: 100%;"></el-time-picker>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="即时配送">
+                <el-switch v-model="form.delivery"></el-switch>
+            </el-form-item>
+            <el-form-item label="活动性质">
+                <el-checkbox-group v-model="form.type">
+                    <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
+                    <el-checkbox label="地推活动" name="type"></el-checkbox>
+                    <el-checkbox label="线下主题活动" name="type"></el-checkbox>
+                    <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+                </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="特殊资源">
+                <el-radio-group v-model="form.resource">
+                    <el-radio label="线上品牌商赞助"></el-radio>
+                    <el-radio label="线下场地免费"></el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item label="活动形式">
+                <el-input type="textarea" v-model="form.desc"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button @click="onCancel">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+    <script type="text/javascript">
+        var elementForm1 = new Vue({
+            el: "#elementForm1",
+            data() {
+                return {
+                    form: {
+                        name: '',
+                        region: '',
+                        date1: '',
+                        date2: '',
+                        delivery: false,
+                        type: [],
+                        resource: '',
+                        desc: ''
+                    }
+                }
+            },
+            methods: {
+                onSubmit() {
+                    console.log('submit!');
+                },
+                onCancel() {
+                    console.log("cancel!");
+                }
+            }
+        })
+    </script>
+
+    <div id="elementform2">
+        <el-form :model="forminline" class="demo-form-inline" :inline="true">
+            <el-form-item label="审批人">
+                <el-input v-model="forminline.user" placeholder="审批人"></el-input>
+            </el-form-item>
+            <el-form-item label="活动区域">
+                <el-select v-model="forminline.region" placeholder="活动区域">
+                    <el-option v-for="(item,index) in forminline.places" :key="index" :value="item"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+    </div>
+    <script type="text/javascript">
+        var elementform2 = new Vue({
+            el: "#elementForm2",
+            data() {
+                return {
+                    forminline: {
+                        user: "",
+                        places: ["上海", "北京"],
+                        region: ""
+                    }
+                }
+            }
+        })
+    </script>
 
     <script src="index.js"></script>
 </body>
